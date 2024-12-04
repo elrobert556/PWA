@@ -1,11 +1,12 @@
 module.exports = {
 	globDirectory: '.',
 	globPatterns: [
-		'**/*.{css,jpg,webp,png,html,js,json}'
+		'**/*.{css,js,jpg,webp,png,html,json}'
 	],
 	swDest: 'sw.js',
 	ignoreURLParametersMatching: [
 		/^utm_/,
 		/^fbclid$/
-	]
+	],
+	importScripts: ['custom-sw.js']
 };

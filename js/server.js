@@ -1,8 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const webPush = require('web-push');
+const cors = require('cors');
 
 const app = express();
+
+// Configuración CORS para permitir solicitudes desde el dominio de producción (GitHub Pages)
+app.use(cors({
+  origin: 'https://elrobert556.github.io/PWA', // Cambia esto por tu dominio de GitHub Pages
+  methods: ['GET', 'POST'],  // Métodos permitidos
+  allowedHeaders: ['Content-Type'], // Encabezados permitidos
+}));
+
 app.use(bodyParser.json());
 
 // Claves VAPID (deben ser únicas y generadas una vez)
@@ -10,12 +19,11 @@ const vapidKeys = webPush.generateVAPIDKeys();
 
 // Configura las claves VAPID
 webPush.setVapidDetails(
-  'mailto:tu-email@ejemplo.com', // Email de contacto
+  'mailto:tu-email@ejemplo.com',  // Tu correo de contacto
   vapidKeys.publicKey,
   vapidKeys.privateKey
 );
 
-// Almacén de suscripciones (en memoria para este ejemplo)
 const subscriptions = [];
 
 // Endpoint para obtener la clave pública VAPID
@@ -34,10 +42,8 @@ app.post('/subscribe', (req, res) => {
 app.post('/sendNotification', (req, res) => {
   const { title, body } = req.body;
 
-  // Enviar notificación a cada suscripción
   subscriptions.forEach((subscription) => {
     const payload = JSON.stringify({ title, body });
-
     webPush.sendNotification(subscription, payload).catch((err) => {
       console.error('Error al enviar notificación:', err);
     });
